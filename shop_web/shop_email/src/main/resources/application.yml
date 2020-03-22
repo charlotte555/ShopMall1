@@ -1,0 +1,12 @@
+spring:
+  mail:
+    protocol: smtp
+    host: smtp.sina.com
+    username: erdong555@sina.com
+    password: da7172323ed4d56b
+
+  rabbitmq:
+    username: admin
+    password: admin
+    virtual-host: /admin
+    host: 192.168.144.155

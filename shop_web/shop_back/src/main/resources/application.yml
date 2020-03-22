@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  thymeleaf:
+    cache: false
+
+dubbo:
+  registry:
+    address: zookeeper://192.168.144.155:2181
+  consumer:
+    check: false
+  application:
+    name: web-goods
+
+##fdfs的有关配置
+fdfs:
+  pool:
+    jmx-enabled: false
+  thumb-image:
+    width: 100
+    height: 100
+    #假设有多个tracker服务器可以配置多个ip
+  tracker-list:
+    - 192.168.144.155:22122
+
+ImgPath: http://192.168.144.155:8080/

@@ -1,0 +1,24 @@
+
+dubbo:
+  registry:
+    address: zookeeper://192.168.144.155:2181
+  protocol:
+    port: -1
+  consumer:
+    check: false
+  application:
+    name: service-user
+
+
+spring:
+  datasource:
+    password: root
+    username: root
+    url: jdbc:mysql:///shopmall?serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  mapper-locations: classpath:com/qf/dao/*.xml
+
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

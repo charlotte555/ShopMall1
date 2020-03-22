@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="${#request.getContextPath()+'/'}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://libs.baidu.com/jquery/1.6.4/jquery.min.js"></script>
+<!--    <script src="https://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>-->
+    <script type="text/javascript" src="page/js/jquery.js" ></script>
+</head>
+
+<body>
+<div th:fragment="headerPage">
+
+    <script>
+        /**
+         * 向后台发送判断是否登录:原来的单体架构思想是直接拿存放在session里的user对象,用c:if标签判断用户是否为空
+         * 但是分布式架构下,用户信息虽然可以存到session里进行拿取,但是过程复杂并且效率不高,可以但是没必要
+         * 在这里直接将判断是否登录的过程以ajax的形式向服务器发送请求进行判断,并根据结果做前端页面登录状态的显示
+         /
+
+         /**
+         * 进行登录状态的判断
+         */
+        $.ajax({
+            url:"http://localhost:8082/sso/isLogin",
+
+            xhrFields: {
+                withCredentials: true
+            },
+            success:function (data) {
+                if (data.code=="200"){
+
+                    $("#hhh1").html(data.data.nickname)
+                    $("#hhh").hide();
+                } else {
+                    $("#login_id02").hide();
+                }
+            } ,
+            dataType:"json",
+        })
+
+        // function ToAhead(data) {
+        //     alert(data.msg)
+        // }
+
+        /**
+         * 实现登录页面的回调
+         */
+        function myLogin() {
+            var returnUrl=location.href;
+            var returnUrl = encodeURIComponent(returnUrl);
+
+            location.href="http://localhost:8082/sso/tologin?returnUrl="+returnUrl;
+        }
+
+        /**
+         * 实现没有登录就添加购物车功能
+         */
+        $.ajax({
+            xhrFields: {
+                withCredentials: true
+            },
+            url:"http://localhost:8083/cart/selectCartListByToken",
+            success:function (data) {
+
+                if (data!=null&&data.length>0){
+                    $("#cartNumber").html(data.length)
+                    var html="<p>" ;
+                    for (var i = 0; i <data.length ; i++) {
+                        //如果传过来的购物车是空的
+                        html+=
+                            "<img style='width: 100px;height: 70px' src='"+data[i].goods.coverUrl+"'>"
+                            +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +data[i].goods.subject
+                            +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].gprice+data[i].gnumber
+                            +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].totalPrice+"<br>";
+                    }
+                    html+="</p>";
+                    $("#showGoods").html(html);
+                }
+            },
+            dataType:"json",
+        })
+
+
+    </script>
+    <!-- Header TopNav -->
+    <div class="shop_hd_topNav">
+        <div class="shop_hd_topNav_all">
+            <!-- Header TopNav Left -->
+            <div class="shop_hd_topNav_all_left">
+
+                <p id="login_id01">
+                    <b id="login_id02">
+                        <label id="hhh1" style="color: #6C9D26;font-size: 20px;"></label>
+                        您好，欢迎来到商城
+                        &nbsp;&nbsp;
+                    [<a href="http://localhost:8082/sso/loginout" style="color: #3d8bd7">注销</a>]
+                    </b>
+                    <label id="hhh">
+                        <b>
+                            [<a  onclick="myLogin()" style="color: #6C9D26">登录</a>]
+
+                            [<a href="http://localhost:8082/sso/toregist" style="color: #5db1a2">注册</a>]
+                        </b>
+                    </label>
+                </p>
+            </div>
+            <!-- Header TopNav Left End -->
+
+            <!-- Header TopNav Right -->
+            <div class="shop_hd_topNav_all_right">
+                <ul class="topNav_quick_menu">
+
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#" class="topNavHover">我的商城<i></i></a>
+                            <div class="topNav_menu_bd" style="display:none;" >
+                                <ul>
+                                    <li><a title="已买到的商品" target="_top" href="#">已买到的商品</a></li>
+                                    <li><a title="个人主页" target="_top" href="#">个人主页</a></li>
+                                    <li><a title="我的好友" target="_top" href="#">我的好友</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#" class="topNavHover">卖家中心<i></i></a>
+                            <div class="topNav_menu_bd" style="display:none;">
+                                <ul>
+                                    <li><a title="已售出的商品" target="_top" href="#">已售出的商品</a></li>
+                                    <li><a title="销售中的商品" target="_top" href="#">销售中的商品</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <!--TODO-->
+                        <div class="topNav_menu">
+<!--                            <input type="hidden" id="userId" name="id">-->
+                            <a href="http://localhost:8083/cart/showShopCart" class="topNavHover">购物车
+                                <b id="cartNumber">0</b>种商品
+                                <i></i>
+                            </a>
+
+                            <div id="showGoods" class="topNav_menu_bd" style="display:none; width: 300px;height: 400px" >
+                                <!--
+                                <ul>
+                                  <li><a title="已售出的商品" target="_top" href="#">已售出的商品</a></li>
+                                  <li><a title="销售中的商品" target="_top" href="#">销售中的商品</a></li>
+                                </ul>
+                                -->
+                                <p>还没有商品，赶快去挑选！</p>
+
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#" class="topNavHover">我的收藏<i></i></a>
+                            <div class="topNav_menu_bd" style="display:none;">
+                                <ul>
+                                    <li><a title="收藏的商品" target="_top" href="#">收藏的商品</a></li>
+                                    <li><a title="收藏的店铺" target="_top" href="#">收藏的店铺</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#">站内消息</a>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- Header TopNav Right End -->
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    <!-- Header TopNav End -->
+
+    <!-- TopHeader Center -->
+    <div class="shop_hd_header">
+        <div class="shop_hd_header_logo"><h1 class="logo">
+            <a href="/">
+                <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576247982463&di=02053e9150b2e5f51c8d7ffc132153d8&imgtype=0&src=http%3A%2F%2Fimg.51ztzj.com%2Fupload%2Fimage%2F20130417%2F201304172007_670x419.jpg" style="width: 300px;height: 80px" alt="ShopCZ" />
+            </a>
+            <span>ShopCZ</span></h1>
+        </div>
+        <div class="shop_hd_header_search">
+            <ul class="shop_hd_header_search_tab">
+                <li id="search" class="current">商品</li>
+                <li id="shop_search">店铺</li>
+            </ul>
+            <div class="clear"></div>
+            <div class="search_form">
+                <form method="get" action="http://localhost:8081/search/searchByKeyWord">
+                    <div class="search_formstyle">
+                        <input type="text" class="search_form_text" name="keyWord" placeholder="搜索其实很简单" value="" />
+                        <input type="submit" class="search_form_sub"  value="" title="搜索" />
+                    </div>
+                </form>
+            </div>
+            <div class="clear"></div>
+            <div class="search_tag">
+                <a>李宁</a>
+                <a>耐克</a>
+                <a>Kappa</a>
+                <a>双肩包</a>
+                <a>手提包</a>
+            </div>
+
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+
+</body>
+</html>

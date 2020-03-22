@@ -1,0 +1,30 @@
+server:
+  port: 8083
+spring:
+  thymeleaf:
+    cache: false
+  redis:
+    host: 192.168.144.155
+    timeout: 100000000000
+    jedis:
+      pool:
+        max-wait: -1
+  rabbitmq:
+    username: admin
+    password: admin
+    virtual-host: /admin
+    host: 192.168.144.155
+
+dubbo:
+  application:
+    name: web-cart
+  consumer:
+    check: false
+    timeout: 1000000000
+    ##
+    retries: 0
+  registry:
+    address: zookeeper://192.168.144.155:2181
+  protocol:
+    port: -1
+

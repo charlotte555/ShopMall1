@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="${#request.getContextPath()+'/'}"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Insert title here</title>
+    <!-- Invalid Stylesheet. This makes stuff look pretty. Remove it if you want the CSS completely valid -->
+    <!-- Reset Stylesheet -->
+    <link rel="stylesheet" href="resources/css/reset.css" type="text/css"
+          media="screen"/>
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="resources/css/style.css" type="text/css"
+          media="screen"/>
+    <link rel="stylesheet" href="resources/css/invalid.css" type="text/css"
+          media="screen"/>
+    <!--js-->
+    <script type="text/javascript"
+            src="resources/scripts/jquery-1.9.1.min.js"></script>
+
+    <!--导入弹框的js和css样式-->
+<!--    <script type="text/javascript" src="resources/widget/dialog/jquery-ui-1.9.2.custom.min.js"></script>-->
+<!--    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css"/>-->
+
+
+    <script src="resources/widget/dialog/jquery-ui-1.9.2.custom.min.js"></script>
+    <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+
+    <script type="text/javascript" src="resources/widget/webuploader/webuploader.min.js"></script>
+    <link rel="stylesheet" href="resources/widget/webuploader/webuploader.css">
+</head>
+
+<body>
+
+<div id="main-content">
+    <div class="content-box">
+
+        <!-- End .content-box-header -->
+        <div class="content-box-content">
+            <div class="tab-content default-tab" id="tab1">
+                <table>
+                    <thead>
+                    <tr>
+                        <th><input class="check-all" type="checkbox"/></th>
+                        <th>id</th>
+                        <th>标题</th>
+                        <th>封面</th>
+                        <th>创建时间</th>
+                        <th>价格</th>
+                        <th>库存</th>
+                        <th>描述</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="goods : ${list}">
+                        <td><input type="checkbox"/></td>
+                        <td th:text="${goods.id}"></td>
+                        <td th:text="${goods.subject}"></td>
+                        <td><img th:src="${goods.coverUrl}" style="width: 120px;height: 90px"/></td>
+                        <td th:text="${#dates.format(goods.createTime,'yyyy-MM-dd')}"></td>
+                        <td th:text="${goods.price}"></td>
+                        <td th:text="${goods.save}"></td>
+                        <td th:text="${goods.info}"></td>
+                        <td>
+                            <!--crud操作-->
+                            <a href="#" title="Edit">
+                                <img src="resources/images/icons/pencil.png" alt="Edit"/></a>
+                            <a href="#" title="Delete">
+                                <img src="resources/images/icons/cross.png" alt="Delete"/></a>
+                            <a href="#" title="Edit Meta">
+                                <img src="resources/images/icons/hammer_screwdriver.png" alt="Edit Meta"/>
+                            </a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                    <tfoot>
+                    <tr>
+                        <td colspan="6">
+                            <!--添加商品的按钮-->
+                            <div class="bulk-actions align-left">
+                                <a class="mybutton" onclick="addGoods();">添加商品</a>
+                            </div>
+
+                            <!--分页的图样-->
+                            <div class="pagination">
+                                <a href="#" title="First Page">&laquo; First</a>
+                                <a href="#" title="Previous Page">&laquo; Previous</a>
+                                <a href="#" class="number" title="1">1</a>
+                                2</a> <a href="#" class="number current" title="3">3</a>
+                                <a href="#" class="number" title="4">4</a>
+                                <a href="#" title="Next Page">Next &raquo;</a>
+                                <a href="#" title="Last Page">Last &raquo;</a>
+                            </div>
+
+                            <div class="clear"></div>
+
+                        </td>
+                    </tr>
+                    </tfoot>
+
+
+                </table>
+            </div>
+        </div>
+        <!-- End .content-box-content -->
+    </div>
+</div>
+
+<script>
+    //添加js自带的弹框用来添加商品
+    function addGoods() {
+        $("#myGoods").dialog({
+            width: 800,
+            height: 600,
+            title: "添加商城",
+            modal: true
+        });
+    }
+
+    //不加初始化页面的function会出现无法展示上传图片样式和js的问题
+    $(function () {
+
+        //使用webUploader来上传图片:1.先导入js和css样式文件,在
+        var uploader = WebUploader.create({
+
+            //是否自动上传
+            auto: true,
+            // swf文件路径
+            swf: 'resources/widget/webuploader/Uploader.swf',
+            // 向后台发送请求的路径
+            server: '/goods/uploader',
+            //选择哪个控件作为上传的按钮
+            pick: '#picker',
+            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+            resize: false
+        });
+
+        //图片回显
+        uploader.on('uploadSuccess', function (file, response) {
+            //如果错误码为200说明发送请求成功
+            if (response.code == "200") {
+                //给选定的div里面设置回显的图片(类似于验证码的前台展示)
+                console.log(response.data)
+                $("#cover_img").attr("src", response.data);
+                //用于提交表单
+                $("#goods-CoverUrl").val(response.data);
+                alert(response.msg);
+            } else {
+                alert("上传图片失败");
+            }
+        })
+    })
+
+    //上传多张图片:同上传一张图片相似的原理,并且与上传单张图片使用相同的controller方法,但是需要在指定的框里进行多张图片的拼接
+    $(function () {
+
+        //使用webUploader来上传图片:1.先导入js和css样式文件,在
+        var uploader = WebUploader.create({
+
+            //是否自动上传
+            auto: true,
+            // swf文件路径
+            swf: 'resources/widget/webuploader/Uploader.swf',
+            // 向后台发送请求的路径
+            server: '/goods/uploader',
+            //选择哪个控件作为上传的按钮
+            pick: '#other_Img',
+            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+            resize: false
+        });
+
+        //多张图片的回显
+        uploader.on('uploadSuccess', function (file, response) {
+            //上传图片成功
+            if (response.code=="200"){
+                //
+                // var ManyImgs="<img src='/goods/backImg?imgPath="+response.data+"+' style='width: 100px;height: 100px'>";
+                var ManyImgs="<img src="+response.data+" style='width: 100px;height: 100px'>";
+                $("#manyImg").append(ManyImgs);
+                // alert(response.msg);
+
+                var inputImgs="<input type='hidden' name='otherUrls' value='"+response.data+"'>";
+                $("#otherUrlsId").append(inputImgs);
+
+            }else {
+                alert("添加失败")
+            }
+        })
+    })
+
+</script>
+
+
+<div id="myGoods" style="display: none">
+    <div class="content-box-content">
+        <div class="tab-content default-tab" id="tab2">
+            <form action="goods/addGoods" method="post">
+
+                <p>
+                    <label>商品标题</label>
+                    <input class="text-input medium-input datepicker" type="text"
+                           id="goods_subject" name="subject"/>
+                </p>
+
+                <p>
+                    <label>商品价格</label>
+                    <input class="text-input medium-input datepicker" type="text"
+                           id="goods_price" name="price"/>
+                </p>
+
+                <p>
+                    <label>商品库存</label>
+                    <input class="text-input medium-input datepicker" type="text"
+                           id="goods-number" name="save"/>
+                </p>
+
+                <p>
+                    <label>封面图片</label>
+                    <img id="cover_img" style="height: 100px;width: 100px">
+                    <input type="hidden" id="goods-CoverUrl" name="CoverUrl"/>
+                <div id="picker">上传图片</div>
+                </p>
+
+                <p>
+                    <label>上传其他图片</label>
+                <!--可装多张图片-->
+                <div id="manyImg" style="width: 500px;height: 200px; border: darkgray solid 1px;margin-top:10px"></div>
+                <div id="other_Img">上传其他图片</div>
+                <!--用来设置图片的隐藏路径,拼接input,用于提交表单-->
+                <div id="otherUrlsId"></div>
+                </p>
+
+                <p>
+                    <label>商品描述</label>
+                    <textarea class="text-input textarea wysiwyg" id="textarea"
+                              name="info" cols="40" rows="">
+                    </textarea>
+                </p>
+
+                <p>
+                    <input class="mybutton" type="submit" value="添加商品"/>
+                </p>
+                </fieldset>
+                <div class="clear"></div>
+                <!-- End .clear -->
+            </form>
+        </div>
+        <!-- End #tab2 -->
+    </div>
+</div>
+</body>
+</html>

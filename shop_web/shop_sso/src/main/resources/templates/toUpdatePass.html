@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="${#request.getContextPath()+'/'}">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>找回密码页面</title>
+    <link rel="stylesheet" type="text/css" href="http://www.njzdyy.com/njzdyyRes/static/css/basic.css" />
+    <link rel="stylesheet" type="text/css" href="http://www.njzdyy.com/njzdyyRes/static/css/small.css" />
+    <script language="javascript" type="text/javascript" src="http://www.njzdyy.com/njzdyyRes/static/js/jquery/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" language="javascript" src="http://www.njzdyy.com/njzdyyRes/static/js/common/common.js"></script>
+    <script type="text/javascript" language="javascript" src="http://www.njzdyy.com/njzdyyRes/static/js/findPass.js"></script>
+</head>
+
+<body onload="checkTime();">
+<script type="text/javascript" language="javascript" >
+
+
+
+    $(function() {
+        setNowtime();
+        //一秒钟更新一次时间
+        setInterval("setNowtime()",1000);
+    });
+    var json;
+    $.post(rootPath()+"/information/searchBmColumn?timestamp="+(new Date()).valueOf()+"&ajax=true", function(data) {
+        if(data!=""){
+            data =jQuery.parseJSON(data);
+            $.each(data, function (key, value) {
+                    var array=key.split(",");
+
+                    $("#menu").append('<li class=stmenu ><h3><input type="hidden" id="sss_'+array[3]+'" value="'+array[3]+'"/><a class=xialaguang href=/njzdyyRes/'+array[1]+'?parentColumnCode='+array[2]+'><span>'+array[0]+'</span></a></h3><div id="left_'+array[3]+'" class="children clearfix">'
+                        +'<div class="children_kjfs"><a class="children_yygh" href="/njzdyyRes/reservation/toReservation"><i></i><strong>预约挂号</strong></a><a class="children_jyjc" href="/njzdyyRes/usercenter/toUsercenter?centerType=yj"><i></i><strong>检验检查</strong></a><a class="children_zxzx" href="/njzdyyRes/usercenter/initQuestionEdit"><i></i><strong>在线咨询</strong></a><a class="children_jktj" href="#"><i></i><strong>健康体检</strong></a><a class="children_tzgg" href="/njzdyyRes/information/toSpecialList?columnCode=df5209a303ad475bb8c84ca6a2962850&parentColumnCode=c558a670262748ec9986390c6ebe367a"><i></i><Strong>停诊公告</strong></a><a class="children_jtzn" href="/njzdyyRes/information/toSpecialDetail?columnCode=f69c3e4df86c40c9b4ed4627255260ef&parentColumnCode=c558a670262748ec9986390c6ebe367a"><i></i><strong>交通指南</strong></a></div><div class="children_img" id="images_'+array[3]+'">'
+
+
+                        +' </div></div></ul></li>')
+                    for(var j=0;j<value.length;j++){
+
+                        $("#left_"+array[3]).append('<ul><li><a href="/njzdyyRes/'+value[j].columnUrl+'?columnCode='+value[j].columnCode+'&parentColumnCode='+array[2]+'">'+value[j].columnName+'</a></li></ul>')
+
+                    }
+                    if(array[3]=='0'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/yygk.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p> ')
+                    }
+                    if(array[3]=='1'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/yyxw.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p> ')
+                    }
+                    if(array[3]=='2'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/ksjs.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p><!--<div class=zk_tab><dl class=clearfix><dt>国家临床重点专科：</dt><dd><span><a href="/njzdyyRes/information/toShowDepDetail?flow=35248014baa347db961dc3f46e705f24&parentColumnCode=3f800da154c942a6b465f2e67049fd97">重症医学科</a></span><span><a href="/njzdyyRes/">医学影像科</a></span></dd></dl><dl class=clearfix><dt>江苏省临床医学研究中心：</dt><dd><span><a href="/njzdyyRes/">医学影像科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=7430beea5a6549608a026ff6bdf9d42f&parentColumnCode=3f800da154c942a6b465f2e67049fd97">肾脏病</a></span></dd></dl><dl class=clearfix style=border:none><dt>省级临床重点专科：</dt><dd><span><a href="/njzdyyRes/">介入放射科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=6d11459cbb7941cc941362c8482b7d60&parentColumnCode=3f800da154c942a6b465f2e67049fd97">普通外科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=a0a28445ce314d2682eeba48697ef805&parentColumnCode=3f800da154c942a6b465f2e67049fd97">骨科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=353999a1f646477184be10c89c98fcea&parentColumnCode=3f800da154c942a6b465f2e67049fd97">血液内科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=1476bbd843d44494a482e96b422c7a87&parentColumnCode=3f800da154c942a6b465f2e67049fd97">急诊医学科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=6e447abba4154f599811c2abc9be0cc8&parentColumnCode=3f800da154c942a6b465f2e67049fd97">消化内科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=7430beea5a6549608a026ff6bdf9d42f&parentColumnCode=3f800da154c942a6b465f2e67049fd97">肾脏内科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=d899ca258b41410fb6871246e5f52f12&parentColumnCode=3f800da154c942a6b465f2e67049fd97">神经内科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=9c2adfb0ee8849b6b99e189a019c8381&parentColumnCode=3f800da154c942a6b465f2e67049fd97">内分泌科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=6b416feb54f145a9ae4fc020d5093feb&parentColumnCode=3f800da154c942a6b465f2e67049fd97">麻醉科</a></span><span><a href="/njzdyyRes/information/toShowDepDetail?flow=20932a9d80cd49819757ac3847ba2c79&parentColumnCode=3f800da154c942a6b465f2e67049fd97">肿瘤科</a></span><span><a href="/njzdyyRes/">...</a></span></dd></dl></div>--> ')
+                    }
+                    if(array[3]=='3'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/ystd.jpg" width="180" height="100" /><p style="font-size:12px">汇聚一流专家团队 为您打造卓越的医疗环境</p> ')
+                    }
+                    if(array[3]=='4'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/xinhzfu.jpg" width="180" height="100" /><p style="font-size:12px">关爱生命 患者至上</p> ')
+                    }
+                    if(array[3]=='5'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/jxky.jpg" width="180" height="100" /><p style="font-size:12px">依靠科研提高医疗质量  通过科研促进医师发展</p> ')
+                    }
+                    if(array[3]=='6'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/xinjkjt.jpg" width="180" height="100" /><p style="font-size:12px">普及健康知识 倡导健康生活</p> ')
+                    }
+                    if(array[3]=='7'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/ddjs.jpg" width="180" height="100" /><p style="font-size:12px">重温先辈的光荣传统 永葆共产党的先进性</p> ')
+                    }
+                    if(array[3]=='9'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/hlyd.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p> ')
+                    }
+                    if(array[3]=='10'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/lcsy.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p> ')
+                    }
+                    if(array[3]=='11'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/jtyy.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p> ')
+                    }
+                    if(array[3]=='12'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/xxgk.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p> ')
+                    }
+                    if(array[3]=='8'){
+                        $("#images_"+array[3]).append('<img src="/njzdyyRes/static/images/join.jpg" width="180" height="100" /><p style="font-size:12px">厚德精业 敦行至善</p> ')
+                    }
+                }
+            );
+            $('#nav-menu .nav_list > li').hover(function(){
+                $(this).find('.children').animate({ opacity:'show', height:'show' },200);
+                $(this).find('.xialaguang').addClass('navhover');
+            }, function() {
+                $('.children').stop(true,true).hide();
+                $('.xialaguang').removeClass('navhover');
+            });
+        }
+    });
+
+
+    //更新当前时间 年月日 星期 时分秒 如：2015年2月1日 星期日12:21:01
+    function setNowtime(){
+        var date = new Date();
+        this.year = date.getFullYear();
+        this.month = date.getMonth() + 1;
+        this.date = date.getDate();
+        this.day = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")[date.getDay()];
+        this.hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+        this.minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+        this.second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+        var currentTime = this.year + "年" + this.month + "月" + this.date + "日 " + " " + this.day + this.hour + ":" + this.minute + ":" + this.second;
+        $("#nowtime").html(currentTime);
+
+        $("#nowtime").html(currentTime);
+
+    }
+
+    function indexSearch() {
+        var keyword = $("#keyword").val().replace(/[ ]/g,"");//去掉空格;
+        //alert(keyword);
+        window.location.href=rootPath()+"/information/indexSearch?keyword="+keyword;
+    }
+</script>
+<!-- top -->
+<div class="top">
+    <form name="pathname" action="/njzdyyRes/index/tologin" id="formid" method="post"  >
+        <input id="pathname1" name="path" type="hidden" />
+    </form>
+    <div class="top_list">
+
+        <p id="nowtime"><!-- 2015年01月07日 星期三 17:56:29 --></p>
+
+    </div>
+</div>
+<div class="box_wid clearfix" style="margin:16px auto;">
+    <p class="logo">
+        <a href="/njzdyyRes">
+        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576074062522&di=a317c7527b03341a345a93fd2df8ce6b&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F6%2F53e866c5e827e_270_185.jpg" width="338" height="72" />
+    </a></p>
+    <div class="search fr">
+    </div>
+</div>
+<!-- 导航 -->
+<div id="clearfix">
+
+    <div class="nav" id="nav-menu" >
+
+        <ul class="nav_list clearfix" id="menu" >
+
+        </ul>
+
+    </div>
+
+</div>
+
+<!-- 注册 -->
+<div class="b_top">
+    <div class="box_rel clearfix">
+        <div class="rel_fl" style="width:723px; height: 400px; overflow:hidden; float:left;">
+            <ul class="rel_list" style=" margin:80px 50px 70px;">
+                <li>
+                 <form action="/forget/updatePass" method="post">
+                    <input type="hidden" name="token" th:value="${#request.getParameter('token')}"><br>
+                   <font color="#cd853f" style="font-size: 20px;">请输入要修改的密码:</font>
+                     <input type="password" name="newPassword" style="height: 30px;width: 200px"><br>
+<br><br>
+                    <button type="submit" style="height:30px;width:160px;color: #6C9D26">修改</button>
+                 </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

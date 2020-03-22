@@ -1,0 +1,30 @@
+server:
+  port: 8082
+
+dubbo:
+  application:
+    name: web-sso
+  consumer:
+    check: false
+    timeout: 1000000000
+    retries: 0
+  protocol:
+    port: -1
+  registry:
+    address: zookeeper://192.168.144.155:2181
+
+spring:
+  thymeleaf:
+    cache: false
+  redis:
+    host: 192.168.144.155
+    timeout: 10000000
+    jedis:
+      pool:
+        max-wait: -1
+  ##关于rabbitMQ的配置
+  rabbitmq:
+    username: admin
+    password: admin
+    virtual-host: /admin
+    host: 192.168.144.155
